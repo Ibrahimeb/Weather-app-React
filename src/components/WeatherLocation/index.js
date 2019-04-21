@@ -8,6 +8,13 @@ import {
 } from './../../constanst/weathers';
 
 
+const location = "Toronto";
+const apikey = "5ba471b883e2a4c3062ada19279517b0";
+const urlBase = "api.openweathermap.org/data/2.5/weather";
+
+const apiWeather = `${urlBase}?q=${location}&appid=${apikey}`;
+
+
 const data = {
     temperature:30,
     weatherstate: SNOW,
@@ -37,9 +44,15 @@ class WeatherLocation extends Component{
 
     handleUpdateClick = ()=>{
         console.log("actualizado");
+
+        fetch(apiWeather).then(resolve => (resolve.json())).then(data => {
+             console.log(data);
+            debugger;
+        })
+
         this.setState({
             data:data2
-        })
+        });
 
 
     }
