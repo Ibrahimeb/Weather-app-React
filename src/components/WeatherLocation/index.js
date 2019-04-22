@@ -12,7 +12,7 @@ const location = "Toronto";
 const apikey = "5ba471b883e2a4c3062ada19279517b0";
 const urlBase = "api.openweathermap.org/data/2.5/weather";
 
-const apiWeather = `${urlBase}?q=${location}&appid=${apikey}`;
+const apiWeather = `http://${urlBase}?q=${location}&appid=${apikey}`;
 
 
 const data = {
@@ -42,19 +42,22 @@ class WeatherLocation extends Component{
         }
     }
 
-    handleUpdateClick = ()=>{
-        console.log("actualizado");
+    handleUpdateClick = async () => {
+        console.log(apiWeather);
 
-        fetch(apiWeather).then(resolve => (resolve.json())).then(data => {
-             console.log(data);
-            debugger;
+        //fetch(apiWeather)
+
+        fetch(apiWeather, {
+            method: 'GET', // or 'PUT'
+        }).then(resolve => resolve.json())
+          .then(data => console.log(data))
+          .catch(err => {
+            console.log(err);
         })
 
         this.setState({
             data:data2
         });
-
-
     }
 
     render(){
