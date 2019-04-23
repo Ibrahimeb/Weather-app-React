@@ -4,15 +4,16 @@ import WeatherData from './WeatherData'
 import './Styles.css'
 import {
     SNOW,
-    RAIN
+    RAIN,
+    SUN
 } from './../../constanst/weathers';
 
 
 const location = "Toronto";
 const apikey = "5ba471b883e2a4c3062ada19279517b0";
-const urlBase = "api.openweathermap.org/data/2.5/weather";
+const urlBase = "http://api.openweathermap.org/data/2.5/weather";
 
-const apiWeather = `http://${urlBase}?q=${location}&appid=${apikey}`;
+const apiWeather = `${urlBase}?q=${location}&appid=${apikey}`;
 
 
 const data = {
@@ -23,15 +24,12 @@ const data = {
 }
 
 
-const data2 = {
-    temperature:15,
-    weatherstate: RAIN,
-    humidity:2,
-    wind:'30 m/s'
-}
+
 
 
 class WeatherLocation extends Component{
+
+
 
 
     constructor(){
@@ -42,22 +40,45 @@ class WeatherLocation extends Component{
         }
     }
 
-    handleUpdateClick = async () => {
-        console.log(apiWeather);
+    getWeatherState = (weather_data) =>{
+        return SUN
 
-        //fetch(apiWeather)
+    }
 
+    getWeatherData = weather_data =>{
+        const {humidity,temp} = weather_data.main;
+        const {speed} =  weather_data.wind;
+        
+
+           const data = {
+            humidity,
+            temperature:temp,
+            wind:`${speed} m/s`,
+            weatherState: this.getWeatherState(weather_data)
+        }
+
+        return data;
+
+    }
+
+
+    handleUpdateClick = () => {
         fetch(apiWeather, {
-            method: 'GET', // or 'PUT'
+            method: 'GET', 
         }).then(resolve => resolve.json())
-          .then(data => console.log(data))
+          .then(data =>{ 
+              const newWeather = this.getWeatherData(data)
+              console.log(newWeather)
+              debugger
+            this.setState({
+                data:newWeather
+            })            
+          })
           .catch(err => {
             console.log(err);
         })
 
-        this.setState({
-            data:data2
-        });
+       
     }
 
     render(){
