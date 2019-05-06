@@ -16,3 +16,9 @@
     line-height: 35px;
     
 }
+
+.CircularProgress{
+    padding: 25px;
+    margin-left: auto;
+    margin-right: auto;
+}

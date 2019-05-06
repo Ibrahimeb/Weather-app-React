@@ -1,75 +1,38 @@
 import React,{Component} from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress'
+import getUrlByCity from "./../../services/getUrlWeatherByCity"
+import {PropTypes} from "prop-types"
+import transformWeather from './../../services/TransformWeather'
 import Location from './Location'
 import WeatherData from './WeatherData'
 import './Styles.css'
-import {
-    SNOW,
-    RAIN,
-    SUN
-} from './../../constanst/weathers';
-
-
-const location = "Toronto";
-const apikey = "5ba471b883e2a4c3062ada19279517b0";
-const urlBase = "http://api.openweathermap.org/data/2.5/weather";
-
-const apiWeather = `${urlBase}?q=${location}&appid=${apikey}`;
-
-
-const data = {
-    temperature:30,
-    weatherstate: SNOW,
-    humidity:10,
-    wind:'10 m/s'
-}
-
-
-
-
 
 class WeatherLocation extends Component{
 
+    constructor(props){
+        super(props);
 
 
-
-    constructor(){
-        super();
+      const  {city} = props;
         this.state = {
-            city : "Toronto, Canada",
-            data : data
+            city ,
+            data : null
         }
     }
 
-    getWeatherState = (weather_data) =>{
-        return SUN
-
-    }
-
-    getWeatherData = weather_data =>{
-        const {humidity,temp} = weather_data.main;
-        const {speed} =  weather_data.wind;
-        
-
-           const data = {
-            humidity,
-            temperature:temp,
-            wind:`${speed} m/s`,
-            weatherState: this.getWeatherState(weather_data)
-        }
-
-        return data;
-
-    }
-
+   componentDidMount(){
+       this.handleUpdateClick();
+   }
 
     handleUpdateClick = () => {
-        fetch(apiWeather, {
+        const url = getUrlByCity(this.state.city)
+        console.log(url);
+        fetch(url, {
             method: 'GET', 
         }).then(resolve => resolve.json())
           .then(data =>{ 
-              const newWeather = this.getWeatherData(data)
+              const newWeather = transformWeather(data)
               console.log(newWeather)
-              debugger
             this.setState({
                 data:newWeather
             })            
@@ -86,12 +49,17 @@ class WeatherLocation extends Component{
             return (
         <div className="WeatherLocationCont">
             <Location city = {city}/> 
-            <WeatherData data = {data}/> 
-            <button onClick={this.handleUpdateClick}>Actualizar</button>
+            {
+                data ?<WeatherData data = {data}/>:
+                <CircularProgress className="CircularProgress" size= {50} />
+            }
+        
         </div>
         );
     };
 }
 
-
+WeatherLocation.proptype={
+   city: PropTypes.string.isRequired,
+}
 export default WeatherLocation;
